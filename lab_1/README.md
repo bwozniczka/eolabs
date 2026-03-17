@@ -10,8 +10,8 @@ Practical notebooks for exploring Earth Observation data with Python.
 |---|---|
 | `visualise_imagery.ipynb` | Quick side-by-side visualisation of VHR, Sentinel-2 and Landsat over Istanbul |
 | `eo_lab_1.ipynb` | Guided lab: multi-resolution comparison, spectral indices (NDVI, NDWI), GeoTIFF export |
-| `environment.yml` | Conda environment file (recommended, works on all platforms) |
-| `requirements.txt` | Pip dependencies (Linux / macOS only) |
+| `pyproject.toml` | Dependencies for uv (recommended) |
+| `environment.yml` | Conda environment file (alternative) |
 | `data/` | Local raster data (see structure below) |
 
 ### Data layout
@@ -39,69 +39,78 @@ All rasters are in **EPSG:32635 (UTM zone 35N)**, covering Istanbul, Turkey.
 
 ## Setup
 
-### 1. Clone the repository
+### 1. Install Git LFS and clone
+
+Git LFS is required to download the raster data files.
 
 ```bash
+# Install Git LFS from https://git-lfs.com, then:
 git clone https://github.com/mloopa/eolabs.git
 cd eolabs/lab_1
 ```
 
-> The data files are stored with Git LFS. Make sure
-> [Git LFS](https://git-lfs.com) is installed before cloning,
-> otherwise the raster files will be downloaded as LFS pointer stubs.
-> Run `git lfs pull` inside the repo if that happens.
+If you cloned without Git LFS installed the raster files will be small
+text stubs (~200 bytes) instead of actual data, causing rasterio to fail
+with *"not recognized as being in a supported file format"*.
+
+Check whether the files downloaded correctly:
+
+```bash
+# Each .tif should be tens or hundreds of MB -- not a few hundred bytes
+ls -lh data/vhr/istanbul_vhr.tiff
+```
+
+If the file is small, fetch the real data:
+
+```bash
+git lfs pull
+```
 
 ---
 
-### Option A — Conda (recommended, works on Windows, macOS and Linux)
+### Option A — uv (recommended)
 
-`rasterio` depends on GDAL. On Windows in particular, installing via pip
-alone often produces a build without the required GDAL drivers, causing
-errors like *"not recognized as being in a supported file format"*.
-Conda resolves all native dependencies automatically.
+[uv](https://docs.astral.sh/uv/) is a fast Python package manager that
+handles the virtual environment and all dependencies in one step.
 
-Install [Miniforge](https://github.com/conda-forge/miniforge/releases/latest)
-(or Anaconda / Miniconda), then:
+**Install uv:**
+
+Windows (PowerShell):
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+macOS / Linux:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Create environment and install dependencies:**
+
+```bash
+uv sync
+```
+
+**Launch Jupyter:**
+
+```bash
+uv run jupyter lab
+```
+
+> Make sure you run these commands from inside the `lab_1/` directory
+> so that relative paths to `data/` resolve correctly.
+
+---
+
+### Option B — Conda (fallback for Windows if uv does not work)
+
+Install [Miniforge](https://github.com/conda-forge/miniforge/releases/latest), then:
 
 ```bash
 conda env create -f environment.yml
 conda activate eolabs
-```
-
-That single command installs Python, rasterio with full GDAL support,
-numpy, matplotlib and JupyterLab.
-
----
-
-### Option B — pip (Linux / macOS only)
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-> **Do not use pip on Windows.** The rasterio pip wheel for Windows
-> does not bundle all GDAL drivers and will fail to open GeoTIFF files.
-> Use Option A instead.
-
----
-
-### 2. Launch Jupyter
-
-```bash
 jupyter lab
 ```
-
-Make sure you launch Jupyter **from inside the `lab_1/` directory**
-so that relative paths to `data/` resolve correctly:
-
-```bash
-cd eolabs/lab_1
-jupyter lab
-```
-
-Open `eo_lab_1.ipynb` to start the lab.
 
 ---
 

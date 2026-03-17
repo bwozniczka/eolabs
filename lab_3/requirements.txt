@@ -1,0 +1,14 @@
+numpy>=2.0
+rasterio>=1.4
+pyproj>=3.6
+matplotlib>=3.9
+jupyterlab>=4.0
+notebook>=7.0
+pandas>=2.0
+scikit-learn>=1.4
+scikit-image>=0.22
+opencv-python>=4.9
+graphviz>=0.20
+pydotplus>=2.0.2
+folium>=0.16
+Pillow>=10.0
