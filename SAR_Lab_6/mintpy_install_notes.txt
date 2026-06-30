@@ -1,3 +1,31 @@
 conda create -n mintpy --override-channels -c conda-forge python=3.11 mintpy jupyterlab ipykernel
 conda activate mintpy
 python -m ipykernel install --user --name mintpy --display-name "Python (mintpy)"
+
+#Test the installation:
+python -c "import mintpy, h5py, scipy, numpy; print('MintPy:', mintpy.__version__)"
+smallbaselineApp.py --help
+view.py --help
+tsview.py --help
+
+if h5py works on command line but not in jupyter, in python, jupyter is using the wrong kernel
+
+
+Download and process data directly (I have already done this for you, because the large scenes can take a long time):
+curl.exe -L -o RidgecrestSenDT71.tar.xz https://zenodo.org/record/11049257/files/RidgecrestSenDT71.tar.xz
+curl.exe -L -o SanFranSenDT42.tar.xz https://zenodo.org/record/4265413/files/SanFranSenDT42.tar.xz
+
+#then, e.g.:
+tar -xf RidgecrestSenDT71.tar.xz
+cd .\RidgecrestSenDT71\mintpy
+
+#To set the correct reference dates (not sure why mintpy is failing to do this automatically):
+#ADD THIS LINE to the RidgecrestSenDT71.txt: mintpy.reference.date = 20190610
+#ADD THIS LINE to the SanFran...txt file: mintpy.reference.date = 20150605
+
+smallbaselineApp.py RidgecrestSenDT71.txt
+view.py velocity.h5
+view.py temporalCoherence.h5
+view.py avgSpatialCoh.h5
+tsview.py timeseries.h5
+plot_network.py inputs\ifgramStack.h5
